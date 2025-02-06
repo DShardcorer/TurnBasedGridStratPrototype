@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MoveAction : MonoBehaviour
+public class MoveAction : BaseAction
 {
 
     private Vector3 targetPosition;
@@ -25,7 +25,7 @@ public class MoveAction : MonoBehaviour
         currentGridPosition = GridManager.Instance.GetGridPosition(transform.position);
     }
 
-    private IEnumerator Move(Vector3 targetPosition)
+    private IEnumerator MoveCoroutine(Vector3 targetPosition)
     {
 
         OnMoveInitiated?.Invoke(this, EventArgs.Empty);
@@ -40,6 +40,7 @@ public class MoveAction : MonoBehaviour
             {
                 transform.position = targetPosition;
                 OnMoveCompleted?.Invoke(this, EventArgs.Empty);
+                OnActionCompleted?.Invoke();
             }
         }
     }
@@ -53,14 +54,15 @@ public class MoveAction : MonoBehaviour
         currentGridPosition = GridManager.Instance.GetGridPosition(transform.position);
     }
 
-    public void MoveTo(GridPosition targetGridPosition)
+    public void Move(GridPosition targetGridPosition, Action onActionCompleted)
     {
+        this.OnActionCompleted = onActionCompleted;
         this.targetPosition = GridManager.Instance.GetWorldPosition(targetGridPosition);
         if (moveCoroutine != null)
         {
             StopCoroutine(moveCoroutine);
         }
-        moveCoroutine = StartCoroutine(Move(targetPosition));
+        moveCoroutine = StartCoroutine(MoveCoroutine(targetPosition));
 
     }
     public List<GridPosition> GetValidMovementGridPositions()

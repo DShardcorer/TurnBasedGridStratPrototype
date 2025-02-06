@@ -7,13 +7,14 @@ public class UnitActionSystem : MonoBehaviour
 {
     public static UnitActionSystem Instance { get; private set; }
     [SerializeField] private Unit selectedUnit;
-
     public event EventHandler<UnitSelectedEventArgs> UnitSelected;
-
     public class UnitSelectedEventArgs : EventArgs
     {
         public Unit unit;
     }
+
+    private bool isBusy = false;
+
     private void Awake()
     {
         if (Instance != null)
@@ -28,6 +29,10 @@ public class UnitActionSystem : MonoBehaviour
 
     private void Update()
     {
+        if (isBusy)
+        {
+            return;
+        }
         if (Input.GetMouseButtonDown(0))
         {
             Unit unit = MouseWorld.Instance.GetUnit();
@@ -50,10 +55,20 @@ public class UnitActionSystem : MonoBehaviour
             }
             Vector3 targetPosition = MouseWorld.Instance.GetPosition();
             GridPosition mouseGridPosition = GridManager.Instance.GetGridPosition(targetPosition);
-            if(selectedUnit.GetMoveAction().IsValidMovementGridPosition(mouseGridPosition))
+            if (selectedUnit.GetMoveAction().IsValidMovementGridPosition(mouseGridPosition))
             {
-                selectedUnit.GetMoveAction().MoveTo(mouseGridPosition);
+                SetBusy();
+                selectedUnit.GetMoveAction().Move(mouseGridPosition, ClearBusy);
             }
+        }
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            if (selectedUnit == null)
+            {
+                return;
+            }
+            SetBusy();
+            selectedUnit.GetSpinAction().Spin(ClearBusy);
 
         }
     }
@@ -65,6 +80,14 @@ public class UnitActionSystem : MonoBehaviour
     public Unit GetSelectedUnit()
     {
         return selectedUnit;
+    }
+    private void SetBusy()
+    {
+        isBusy = true;
+    }
+    private void ClearBusy()
+    {
+        isBusy = false;
     }
 
 }

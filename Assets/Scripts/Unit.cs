@@ -8,6 +8,7 @@ public class Unit : MonoBehaviour
     private GridPosition gridPosition;
     private Coroutine updateGridPositionCoroutine;
     private MoveAction moveAction;
+    private SpinAction spinAction;
 
 
 
@@ -41,6 +42,7 @@ public class Unit : MonoBehaviour
     private void GetComponents()
     {
         moveAction = GetComponent<MoveAction>();
+        spinAction = GetComponent<SpinAction>();
     }
 
     private void AssignInitialFields()
@@ -71,6 +73,10 @@ public class Unit : MonoBehaviour
     public MoveAction GetMoveAction()
     {
         return moveAction;
+    }
+    public SpinAction GetSpinAction()
+    {
+        return spinAction;
     }
 
 
