@@ -95,4 +95,9 @@ public class MoveAction : BaseAction
         List<GridPosition> validGridPositions = GetValidMovementGridPositions();
         return validGridPositions.Contains(gridPosition);
     }
+
+    public override string GetActionName()
+    {
+        return "Move";
+    }
 }

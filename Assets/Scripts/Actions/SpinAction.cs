@@ -30,4 +30,8 @@ public class SpinAction : BaseAction
         }
         spinCoroutine = StartCoroutine(SpinCoroutine());
     }
+    public override string GetActionName()
+    {
+        return "Spin";
+    }
 }
