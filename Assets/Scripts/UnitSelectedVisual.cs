@@ -11,11 +11,12 @@ public class UnitSelectedVisual : MonoBehaviour
     private void Start()
     {
         UnitActionSystem.Instance.OnUnitSelected += OnUnitSelected;
+        Hide();
     }
 
     private void OnUnitSelected(object sender, UnitActionSystem.OnUnitSelectedEventArgs e)
     {
-        if (e.unit == unit)
+        if (e.selectedUnit == unit)
         {
 
             Show();

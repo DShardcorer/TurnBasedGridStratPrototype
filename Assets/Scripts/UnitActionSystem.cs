@@ -2,16 +2,27 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using UnityEngine.EventSystems;
 public class UnitActionSystem : MonoBehaviour
 {
     public static UnitActionSystem Instance { get; private set; }
-    [SerializeField] private Unit selectedUnit;
+
     public event EventHandler<OnUnitSelectedEventArgs> OnUnitSelected;
     public class OnUnitSelectedEventArgs : EventArgs
     {
-        public Unit unit;
+        public Unit selectedUnit;
     }
+
+    public event EventHandler<OnActionSelectedEventArgs> OnActionSelected;
+
+    public class OnActionSelectedEventArgs : EventArgs
+    {
+        public BaseAction selectedAction;
+    }
+    public event EventHandler OnActionInitiated;
+    public event EventHandler OnActionCompleted;
+    private Unit selectedUnit;
+    private BaseAction selectedAction;
 
     private bool isBusy = false;
 
@@ -33,6 +44,38 @@ public class UnitActionSystem : MonoBehaviour
         {
             return;
         }
+        if (EventSystem.current.IsPointerOverGameObject())
+        {
+            return;
+        }
+        HandleUnitSelection();
+        HandleActionPerform();
+
+
+    }
+
+    private void HandleActionPerform()
+    {
+        if (Input.GetMouseButtonDown(1))
+        {
+            Vector3 mousePosition = MouseWorld.Instance.GetPosition();
+            GridPosition mouseGridPosition = GridManager.Instance.GetGridPosition(mousePosition);
+            if (!selectedAction.IsValidMovementGridPosition(mouseGridPosition))
+            {
+                return;
+            }
+            if (!selectedUnit.TrySpendActionPointsToPerformAction(selectedAction))
+            {
+                return;
+            }
+            SetBusy();
+            selectedAction.PerformAction(mouseGridPosition, ClearBusy);
+        }
+
+    }
+
+    private void HandleUnitSelection()
+    {
         if (Input.GetMouseButtonDown(0))
         {
             Unit unit = MouseWorld.Instance.GetUnit();
@@ -47,47 +90,39 @@ public class UnitActionSystem : MonoBehaviour
 
 
         }
-        if (Input.GetMouseButtonDown(1))
-        {
-            if (selectedUnit == null)
-            {
-                return;
-            }
-            Vector3 targetPosition = MouseWorld.Instance.GetPosition();
-            GridPosition mouseGridPosition = GridManager.Instance.GetGridPosition(targetPosition);
-            if (selectedUnit.GetMoveAction().IsValidMovementGridPosition(mouseGridPosition))
-            {
-                SetBusy();
-                selectedUnit.GetMoveAction().Move(mouseGridPosition, ClearBusy);
-            }
-        }
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            if (selectedUnit == null)
-            {
-                return;
-            }
-            SetBusy();
-            selectedUnit.GetSpinAction().Spin(ClearBusy);
-
-        }
     }
+
     private void SetSelectedUnit(Unit unit)
     {
         selectedUnit = unit;
-        OnUnitSelected?.Invoke(this, new OnUnitSelectedEventArgs { unit = unit });
+        SetSelectedAction(unit.GetMoveAction());
+        OnUnitSelected?.Invoke(this, new OnUnitSelectedEventArgs { selectedUnit = unit });
     }
+
+    public void SetSelectedAction(BaseAction action)
+    {
+        selectedAction = action;
+        OnActionSelected?.Invoke(this, new OnActionSelectedEventArgs { selectedAction = action });
+    }
+
+
     public Unit GetSelectedUnit()
     {
         return selectedUnit;
     }
+    public BaseAction GetSelectedAction()
+    {
+        return selectedAction;
+    }
     private void SetBusy()
     {
         isBusy = true;
+        OnActionInitiated?.Invoke(this, EventArgs.Empty);
     }
     private void ClearBusy()
     {
         isBusy = false;
+        OnActionCompleted?.Invoke(this, EventArgs.Empty);
     }
 
 }

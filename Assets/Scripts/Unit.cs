@@ -9,6 +9,9 @@ public class Unit : MonoBehaviour
     private Coroutine updateGridPositionCoroutine;
     private MoveAction moveAction;
     private SpinAction spinAction;
+    
+    private const int MAX_ACTION_POINTS = 3;
+    private int actionPoints = 3;
 
     private BaseAction[] baseActionArray;
 
@@ -21,6 +24,19 @@ public class Unit : MonoBehaviour
         SubcribeToActionComponents();
 
     }
+    private void AssignInitialFields()
+    {
+        gridPosition = GridManager.Instance.GetGridPosition(transform.position);
+        GridManager.Instance.SetUnitAtGridPosition(this, gridPosition);
+    }
+
+    private void GetComponents()
+    {
+        moveAction = GetComponent<MoveAction>();
+        spinAction = GetComponent<SpinAction>();
+        baseActionArray = GetComponents<BaseAction>();
+    }
+
 
     private void SubcribeToActionComponents()
     {
@@ -41,18 +57,7 @@ public class Unit : MonoBehaviour
         }
     }
 
-    private void GetComponents()
-    {
-        moveAction = GetComponent<MoveAction>();
-        spinAction = GetComponent<SpinAction>();
-        baseActionArray = GetComponents<BaseAction>();
-    }
 
-    private void AssignInitialFields()
-    {
-        gridPosition = GridManager.Instance.GetGridPosition(transform.position);
-        GridManager.Instance.SetUnitAtGridPosition(this, gridPosition);
-    }
 
     private IEnumerator UpdateGridPosition()
     {
@@ -84,6 +89,43 @@ public class Unit : MonoBehaviour
     public BaseAction[] GetBaseActionArray()
     {
         return baseActionArray;
+    }
+
+    public bool TrySpendActionPointsToPerformAction(BaseAction action)
+    {
+        if (CanSpendActionPointsToPerformAction(action))
+        {
+            SpendActionPoints(action.GetActionPointCost());
+            return true;
+        }
+        return false;
+    }
+
+    public bool CanSpendActionPointsToPerformAction(BaseAction action)
+    {
+        if(actionPoints >= action.GetActionPointCost())
+        {
+            return true;
+        }
+        return false;
+    }
+
+    public void SpendActionPoints(int actionPointCost)
+    {
+        actionPoints -= actionPointCost;
+    }
+    public int GetActionPoints()
+    {
+        return actionPoints;
+    }
+    public void ResetActionPoints()
+    {
+        actionPoints = MAX_ACTION_POINTS;
+    }
+
+    public int GetMaxActionPoints()
+    {
+        return MAX_ACTION_POINTS;
     }
 
 

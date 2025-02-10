@@ -6,6 +6,10 @@ using UnityEngine;
 public class SpinAction : BaseAction
 {
 
+    private void Awake()
+    {
+        SetActionPointCost(1);
+    }
 
     private Coroutine spinCoroutine;
     IEnumerator SpinCoroutine(float spinAmount = 360f)
@@ -21,7 +25,7 @@ public class SpinAction : BaseAction
         OnActionCompleted?.Invoke();
     }
 
-    public void Spin(Action onActionCompleted)
+    public override void PerformAction(GridPosition targetGridPosition, Action onActionCompleted)
     {
         this.OnActionCompleted = onActionCompleted;
         if (spinCoroutine != null)
@@ -34,4 +38,17 @@ public class SpinAction : BaseAction
     {
         return "Spin";
     }
+
+    public override List<GridPosition> GetValidMovementGridPositions()
+    {
+        List<GridPosition> validGridPositions = new List<GridPosition>();
+        validGridPositions.Add(GridManager.Instance.GetGridPosition(transform.position));
+        return validGridPositions;
+    }
+    public override bool IsValidMovementGridPosition(GridPosition gridPosition)
+    {
+        return true;
+    }
+
+
 }

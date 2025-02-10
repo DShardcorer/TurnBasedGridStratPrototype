@@ -19,6 +19,7 @@ public class MoveAction : BaseAction
     private void Awake()
     {
         targetPosition = transform.position;
+        SetActionPointCost(1);
     }
     private void Start()
     {
@@ -54,7 +55,7 @@ public class MoveAction : BaseAction
         currentGridPosition = GridManager.Instance.GetGridPosition(transform.position);
     }
 
-    public void Move(GridPosition targetGridPosition, Action onActionCompleted)
+    public override void PerformAction(GridPosition targetGridPosition, Action onActionCompleted)
     {
         this.OnActionCompleted = onActionCompleted;
         this.targetPosition = GridManager.Instance.GetWorldPosition(targetGridPosition);
@@ -65,7 +66,7 @@ public class MoveAction : BaseAction
         moveCoroutine = StartCoroutine(MoveCoroutine(targetPosition));
 
     }
-    public List<GridPosition> GetValidMovementGridPositions()
+    public override List<GridPosition> GetValidMovementGridPositions()
     {
 
         List<GridPosition> validGridPositions = new List<GridPosition>();
@@ -90,11 +91,7 @@ public class MoveAction : BaseAction
         }
         return validGridPositions;
     }
-    public bool IsValidMovementGridPosition(GridPosition gridPosition)
-    {
-        List<GridPosition> validGridPositions = GetValidMovementGridPositions();
-        return validGridPositions.Contains(gridPosition);
-    }
+
 
     public override string GetActionName()
     {
