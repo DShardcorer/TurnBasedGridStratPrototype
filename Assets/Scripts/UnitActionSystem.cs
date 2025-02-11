@@ -26,6 +26,8 @@ public class UnitActionSystem : MonoBehaviour
 
     private bool isBusy = false;
 
+
+
     private void Awake()
     {
         if (Instance != null)
@@ -56,11 +58,15 @@ public class UnitActionSystem : MonoBehaviour
 
     private void HandleActionPerform()
     {
+        if (!TurnSystem.Instance.IsPlayerTurn())
+        {
+            return;
+        }
         if (Input.GetMouseButtonDown(1))
         {
             Vector3 mousePosition = MouseWorld.Instance.GetPosition();
             GridPosition mouseGridPosition = GridManager.Instance.GetGridPosition(mousePosition);
-            if (!selectedAction.IsValidMovementGridPosition(mouseGridPosition))
+            if (!selectedAction.IsValidActionGridPosition(mouseGridPosition))
             {
                 return;
             }
@@ -79,14 +85,21 @@ public class UnitActionSystem : MonoBehaviour
         if (Input.GetMouseButtonDown(0))
         {
             Unit unit = MouseWorld.Instance.GetUnit();
-            if (unit != null)
+
+            if (unit == null)
             {
-                SetSelectedUnit(unit);
+                return;
             }
-            else
+            if (selectedUnit == unit)
             {
-                SetSelectedUnit(null);
+                return;
             }
+            if (!unit.IsPlayerUnit())
+            {
+                return;
+            }
+
+            SetSelectedUnit(unit);
 
 
         }
@@ -124,6 +137,7 @@ public class UnitActionSystem : MonoBehaviour
         isBusy = false;
         OnActionCompleted?.Invoke(this, EventArgs.Empty);
     }
+
 
 }
 

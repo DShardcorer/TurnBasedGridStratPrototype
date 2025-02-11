@@ -8,8 +8,6 @@ public class MoveAction : BaseAction
 
     private Vector3 targetPosition;
     private Coroutine moveCoroutine;
-
-    private GridPosition currentGridPosition;
     private int maxMovementGridDistance = 3;
 
     public event EventHandler OnMoveInitiated;
@@ -21,14 +19,14 @@ public class MoveAction : BaseAction
         targetPosition = transform.position;
         SetActionPointCost(1);
     }
-    private void Start()
+    protected override void Start()
     {
-        currentGridPosition = GridManager.Instance.GetGridPosition(transform.position);
+        base.Start();
     }
 
-    private IEnumerator MoveCoroutine(Vector3 targetPosition)
+    protected override IEnumerator ActionCoroutine(GridPosition targetGridPosition)
     {
-
+        this.targetPosition = GridManager.Instance.GetWorldPosition(targetGridPosition);
         OnMoveInitiated?.Invoke(this, EventArgs.Empty);
         while (targetPosition != transform.position)
         {
@@ -58,15 +56,15 @@ public class MoveAction : BaseAction
     public override void PerformAction(GridPosition targetGridPosition, Action onActionCompleted)
     {
         this.OnActionCompleted = onActionCompleted;
-        this.targetPosition = GridManager.Instance.GetWorldPosition(targetGridPosition);
+
         if (moveCoroutine != null)
         {
             StopCoroutine(moveCoroutine);
         }
-        moveCoroutine = StartCoroutine(MoveCoroutine(targetPosition));
+        moveCoroutine = StartCoroutine(ActionCoroutine(targetGridPosition));
 
     }
-    public override List<GridPosition> GetValidMovementGridPositions()
+    public override List<GridPosition> GetValidActionGridPositions()
     {
 
         List<GridPosition> validGridPositions = new List<GridPosition>();
@@ -77,13 +75,21 @@ public class MoveAction : BaseAction
                 GridPosition offsetGridPosition = new GridPosition(width, length);
                 GridPosition testGridPosition = currentGridPosition + offsetGridPosition;
 
-                if (!GridManager.Instance.IsValidGridPosition(testGridPosition)){
+                if (!GridManager.Instance.IsValidGridPosition(testGridPosition))
+                {
                     continue;
                 }
-                if(currentGridPosition == testGridPosition){
+                int testDistance = (int)Mathf.Sqrt(Mathf.Abs(width) ^ 2 + Mathf.Abs(length) ^ 2);
+                if (testDistance > maxMovementGridDistance)
+                {
                     continue;
                 }
-                if(GridManager.Instance.IsGridPositionOccupied(testGridPosition)){
+                if (currentGridPosition == testGridPosition)
+                {
+                    continue;
+                }
+                if (GridManager.Instance.IsGridPositionOccupied(testGridPosition))
+                {
                     continue;
                 }
                 validGridPositions.Add(testGridPosition);

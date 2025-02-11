@@ -11,9 +11,10 @@ public class SpinAction : BaseAction
         SetActionPointCost(1);
     }
 
-    private Coroutine spinCoroutine;
-    IEnumerator SpinCoroutine(float spinAmount = 360f)
+
+    protected override IEnumerator ActionCoroutine(GridPosition targetGridPosition)
     {
+        float spinAmount = 360f;
         float spinnedAmount = 0;
         while (spinnedAmount < spinAmount)
         {
@@ -25,27 +26,18 @@ public class SpinAction : BaseAction
         OnActionCompleted?.Invoke();
     }
 
-    public override void PerformAction(GridPosition targetGridPosition, Action onActionCompleted)
-    {
-        this.OnActionCompleted = onActionCompleted;
-        if (spinCoroutine != null)
-        {
-            StopCoroutine(spinCoroutine);
-        }
-        spinCoroutine = StartCoroutine(SpinCoroutine());
-    }
     public override string GetActionName()
     {
         return "Spin";
     }
 
-    public override List<GridPosition> GetValidMovementGridPositions()
+    public override List<GridPosition> GetValidActionGridPositions()
     {
         List<GridPosition> validGridPositions = new List<GridPosition>();
         validGridPositions.Add(GridManager.Instance.GetGridPosition(transform.position));
         return validGridPositions;
     }
-    public override bool IsValidMovementGridPosition(GridPosition gridPosition)
+    public override bool IsValidActionGridPosition(GridPosition gridPosition)
     {
         return true;
     }

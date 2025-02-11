@@ -5,26 +5,51 @@ using UnityEngine;
 
 public abstract class BaseAction : MonoBehaviour
 {
+    protected Unit unit;
     public Action OnActionCompleted;
 
     protected int actionPointCost;
 
-    public void SetActionPointCost(int actionPointCost){
+    protected GridPosition currentGridPosition;
+    protected GridPosition targetGridPoisition;
+    protected Coroutine actionCoroutine;
+
+    protected virtual void Start()
+    {
+        unit = GetComponent<Unit>();
+        currentGridPosition = GridManager.Instance.GetGridPosition(transform.position);
+    }
+
+
+    public void SetActionPointCost(int actionPointCost)
+    {
         this.actionPointCost = actionPointCost;
     }
-    public int GetActionPointCost(){
+    public int GetActionPointCost()
+    {
         return actionPointCost;
     }
 
 
     public abstract string GetActionName();
 
-    public abstract void PerformAction(GridPosition targetGridPosition, Action OnActionCompleted);
-    public virtual bool IsValidMovementGridPosition(GridPosition gridPosition)
+    public virtual void PerformAction(GridPosition targetGridPosition, Action onActionCompleted)
     {
-        List<GridPosition> validGridPositions = GetValidMovementGridPositions();
+        this.OnActionCompleted = onActionCompleted;
+        if (actionCoroutine != null)
+        {
+            StopCoroutine(actionCoroutine);
+        }
+        actionCoroutine = StartCoroutine(ActionCoroutine(targetGridPoisition));
+    }
+
+    protected abstract IEnumerator ActionCoroutine(GridPosition targetGridPosition);
+
+    public virtual bool IsValidActionGridPosition(GridPosition gridPosition)
+    {
+        List<GridPosition> validGridPositions = GetValidActionGridPositions();
         return validGridPositions.Contains(gridPosition);
     }
 
-    public abstract List<GridPosition> GetValidMovementGridPositions();
+    public abstract List<GridPosition> GetValidActionGridPositions();
 }

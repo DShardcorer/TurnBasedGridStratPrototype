@@ -5,14 +5,22 @@ using UnityEngine;
 
 public class Unit : MonoBehaviour
 {
+    public enum UnitType
+    {
+        Player,
+        Enemy
+    }
+
+    [SerializeField] private UnitType unitType = UnitType.Player;
     private GridPosition gridPosition;
     private Coroutine updateGridPositionCoroutine;
     private MoveAction moveAction;
     private SpinAction spinAction;
-    
-    private const int MAX_ACTION_POINTS = 3;
-    private int actionPoints = 3;
 
+    private const int MAX_ACTION_POINTS = 3;
+    private int actionPoints = MAX_ACTION_POINTS;
+
+    public static event EventHandler OnAnyActionPointChanged;
     private BaseAction[] baseActionArray;
 
 
@@ -22,8 +30,12 @@ public class Unit : MonoBehaviour
         AssignInitialFields();
         GetComponents();
         SubcribeToActionComponents();
+        SubscribeToSystems();
 
     }
+
+
+
     private void AssignInitialFields()
     {
         gridPosition = GridManager.Instance.GetGridPosition(transform.position);
@@ -44,6 +56,13 @@ public class Unit : MonoBehaviour
         moveAction.OnMoveCompleted += MoveAction_OnMoveCompleted;
     }
 
+    private void SubscribeToSystems()
+    {
+        TurnSystem.Instance.OnTurnEnd += TurnSystem_OnTurnEnd;
+    }
+
+
+
     private void MoveAction_OnMoveInitiated(object sender, EventArgs e)
     {
         updateGridPositionCoroutine = StartCoroutine(UpdateGridPosition());
@@ -57,7 +76,10 @@ public class Unit : MonoBehaviour
         }
     }
 
-
+    private void TurnSystem_OnTurnEnd(object sender, int e)
+    {
+        ResetActionPoints();
+    }
 
     private IEnumerator UpdateGridPosition()
     {
@@ -103,7 +125,7 @@ public class Unit : MonoBehaviour
 
     public bool CanSpendActionPointsToPerformAction(BaseAction action)
     {
-        if(actionPoints >= action.GetActionPointCost())
+        if (actionPoints >= action.GetActionPointCost())
         {
             return true;
         }
@@ -113,6 +135,7 @@ public class Unit : MonoBehaviour
     public void SpendActionPoints(int actionPointCost)
     {
         actionPoints -= actionPointCost;
+        OnAnyActionPointChanged?.Invoke(this, EventArgs.Empty);
     }
     public int GetActionPoints()
     {
@@ -120,12 +143,32 @@ public class Unit : MonoBehaviour
     }
     public void ResetActionPoints()
     {
-        actionPoints = MAX_ACTION_POINTS;
+        if (IsPlayerUnit() && TurnSystem.Instance.IsPlayerTurn() ||
+            !IsPlayerUnit() && !TurnSystem.Instance.IsPlayerTurn())
+        {
+            actionPoints = MAX_ACTION_POINTS;
+            OnAnyActionPointChanged?.Invoke(this, EventArgs.Empty);
+        }
+
     }
 
     public int GetMaxActionPoints()
     {
         return MAX_ACTION_POINTS;
+    }
+
+    public UnitType GetUnitType()
+    {
+        return unitType;
+    }
+    public bool IsPlayerUnit()
+    {
+        return unitType == UnitType.Player;
+    }
+
+    public bool IsEnemyUnit()
+    {
+        return !IsPlayerUnit();
     }
 
 

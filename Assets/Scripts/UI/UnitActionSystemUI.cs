@@ -35,12 +35,16 @@ public class UnitActionSystemUI : MonoBehaviour
         UnitActionSystem.Instance.OnActionSelected += UnitActionSystem_OnActionSelected;
         UnitActionSystem.Instance.OnActionInitiated += UnitActionSystem_OnActionInitiated;
         UnitActionSystem.Instance.OnActionCompleted += UnitActionSystem_OnActionCompleted;
+        Unit.OnAnyActionPointChanged += Unit_OnAnyActionPointChanged;
         ClearActionButtons();
         busyActionBlocker.SetActive(false);
         actionPointText.text = "";
     }
 
-
+    private void Unit_OnAnyActionPointChanged(object sender, EventArgs e)
+    {
+        UpdateActionPointText();
+    }
 
     private void UnitActionSystem_OnActionInitiated(object sender, EventArgs e)
     {
@@ -64,6 +68,7 @@ public class UnitActionSystemUI : MonoBehaviour
     private void UnitActionSystem_OnUnitSelected(object sender, UnitActionSystem.OnUnitSelectedEventArgs e)
     {
         SetActionButtons(e.selectedUnit.GetBaseActionArray());
+        UpdateActionPointText();
     }
 
     private void UnitActionSystem_OnActionSelected(object sender, UnitActionSystem.OnActionSelectedEventArgs e)
