@@ -20,7 +20,6 @@ public class ShootAction : BaseAction
         SetActionPointCost(1);
     }
 
-    private Coroutine actionCoroutine;
     protected override IEnumerator ActionCoroutine(GridPosition targetGridPosition)
     {
         float spinAmount = 360f;
