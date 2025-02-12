@@ -324,8 +324,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 330585543}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.31493342, y: 1.0699683e-22, z: -3.5503515e-23, w: 0.9491138}
-  m_LocalPosition: {x: 0, y: 7.457459, z: -10}
+  m_LocalRotation: {x: 0.35263905, y: -1.4096302e-15, z: 5.312163e-16, w: 0.9357594}
+  m_LocalPosition: {x: 0, y: 8.78448, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -777,7 +777,7 @@ PrefabInstance:
     - target: {fileID: 3106747978175989038, guid: bd67bf4bb2a7a6246a5a436dacf85bbe,
         type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3106747978175989038, guid: bd67bf4bb2a7a6246a5a436dacf85bbe,
         type: 3}
@@ -787,7 +787,7 @@ PrefabInstance:
     - target: {fileID: 3106747978175989038, guid: bd67bf4bb2a7a6246a5a436dacf85bbe,
         type: 3}
       propertyPath: m_LocalRotation.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3106747978175989038, guid: bd67bf4bb2a7a6246a5a436dacf85bbe,
         type: 3}
@@ -802,7 +802,7 @@ PrefabInstance:
     - target: {fileID: 3106747978175989038, guid: bd67bf4bb2a7a6246a5a436dacf85bbe,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: 180
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3106747978175989038, guid: bd67bf4bb2a7a6246a5a436dacf85bbe,
         type: 3}
@@ -1398,8 +1398,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 997411345}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.3149334, y: 8.5892084e-23, z: 2.8099778e-23, w: 0.94911385}
-  m_LocalPosition: {x: 0, y: 7.457459, z: -10}
+  m_LocalRotation: {x: 0.35263902, y: -1.5556951e-15, z: 9.188127e-16, w: 0.9357595}
+  m_LocalPosition: {x: 0, y: 8.78448, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1865,7 +1865,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_BindingMode: 1
-  m_FollowOffset: {x: 0, y: 7.457459, z: -10}
+  m_FollowOffset: {x: 0, y: 8.78448, z: -10}
   m_XDamping: 1
   m_YDamping: 1
   m_ZDamping: 1

@@ -35,7 +35,6 @@ public class GridManager : MonoBehaviour
     }
     public void SetUnitAtGridPosition(Unit unit, GridPosition gridPosition)
     {
-        Debug.Log("Setting unit at grid position:" + gridPosition);
         GridObject gridObject =  gridSystem.GetGridObject(gridPosition);
         gridObject.SetUnit(unit);
     }

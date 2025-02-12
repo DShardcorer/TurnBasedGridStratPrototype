@@ -7,6 +7,18 @@ public class ShootAction : BaseAction
 {
     private int maxShootGridDistance = 7;
 
+    private enum State
+    {
+        Aiming,
+        Shooting,
+        CoolOff,
+        Finished
+    }
+    private State state;
+    private float timer;
+
+    private Unit targetUnit;
+
     protected override void Start()
     {
         base.Start();
@@ -20,21 +32,63 @@ public class ShootAction : BaseAction
         SetActionPointCost(1);
     }
 
+    private float aimingTimer = 1f;
+    private float shootingTimer = 0.3f;
+    private float coolOffTimer = 0.5f;
+
+
     protected override IEnumerator ActionCoroutine(GridPosition targetGridPosition)
     {
-        float spinAmount = 360f;
-        float spinnedAmount = 0;
-        while (spinnedAmount < spinAmount)
+        targetUnit = GridManager.Instance.GetUnitAtGridPosition(targetGridPoisition);
+        state = State.Aiming;
+        timer = aimingTimer;
+        while (state != State.Finished)
         {
-            float spinAddAmount = 360f * Time.deltaTime;
-            transform.eulerAngles += new Vector3(0, spinAddAmount, 0);
-            spinnedAmount += spinAddAmount;
+            timer -= Time.deltaTime;
+            if(state == State.Aiming){
+                HandleAiming(targetGridPoisition);
+            }
+            if (timer <= 0)
+            {
+                NextState();
+            }
             yield return null;
         }
-        OnActionCompleted?.Invoke();
     }
 
+    private void HandleAiming(GridPosition targetGridPosition)
+    {
+        float rotateSpeed = 10f;
+        Vector3 targetDirection = (GridManager.Instance.GetWorldPosition(targetGridPosition) - transform.position).normalized; 
+        transform.forward = Vector3.Lerp(transform.forward, targetDirection , Time.deltaTime * rotateSpeed);
 
+    }
+
+    private void NextState()
+    {
+        Debug.Log(state);
+        switch (state)
+        {
+            case State.Aiming:
+                state = State.Shooting;
+                timer = shootingTimer;
+                break;
+            case State.Shooting:
+                Shoot();
+                state = State.CoolOff;
+                timer = coolOffTimer;
+                break;
+            case State.CoolOff:
+                state = State.Finished;
+                OnActionCompleted?.Invoke();
+                break;
+        }
+    }
+
+    private void Shoot()
+    {
+        targetUnit.Damage();
+    }
 
     public override List<GridPosition> GetValidActionGridPositions()
     {

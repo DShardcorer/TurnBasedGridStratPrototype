@@ -172,6 +172,12 @@ public class Unit : MonoBehaviour
     }
 
 
+    public void Damage()
+    {
+        Debug.Log("Unit" + gameObject.name + "damaged!");
+    }
+
+
 
 
 }

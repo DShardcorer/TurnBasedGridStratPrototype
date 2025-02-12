@@ -25,6 +25,10 @@ public class DebugGridObject : MonoBehaviour
     }
     public void UpdateText()
     {
+        if (gridObject == null)
+        {
+            return;
+        }
         displayText.text = gridObject.ToString();
     }
 
