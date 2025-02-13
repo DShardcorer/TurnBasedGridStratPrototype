@@ -26,7 +26,16 @@ public class GridObject
     }
     public Unit GetUnit()
     {
-        return unitList[0];
+
+        if (unitList.Count > 0)
+        {
+            return unitList[0];
+        }
+        else
+        {
+            Debug.LogWarning("No unit found in this grid cell.");
+            return null; // Or throw an exception if that's more appropriate for your logic.
+        }
     }
     public void SetUnit(Unit unit)
     {

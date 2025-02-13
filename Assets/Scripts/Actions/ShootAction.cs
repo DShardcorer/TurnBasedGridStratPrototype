@@ -39,14 +39,21 @@ public class ShootAction : BaseAction
 
     protected override IEnumerator ActionCoroutine(GridPosition targetGridPosition)
     {
-        targetUnit = GridManager.Instance.GetUnitAtGridPosition(targetGridPoisition);
+
+        targetUnit = GridManager.Instance.GetUnitAtGridPosition(base.targetGridPosition);
+        if (targetUnit == null)
+        {
+            Debug.LogWarning("Target unit is null");
+            yield break;
+        }
         state = State.Aiming;
         timer = aimingTimer;
         while (state != State.Finished)
         {
             timer -= Time.deltaTime;
-            if(state == State.Aiming){
-                HandleAiming(targetGridPoisition);
+            if (state == State.Aiming)
+            {
+                HandleAiming(base.targetGridPosition);
             }
             if (timer <= 0)
             {
@@ -59,8 +66,8 @@ public class ShootAction : BaseAction
     private void HandleAiming(GridPosition targetGridPosition)
     {
         float rotateSpeed = 10f;
-        Vector3 targetDirection = (GridManager.Instance.GetWorldPosition(targetGridPosition) - transform.position).normalized; 
-        transform.forward = Vector3.Lerp(transform.forward, targetDirection , Time.deltaTime * rotateSpeed);
+        Vector3 targetDirection = (GridManager.Instance.GetWorldPosition(targetGridPosition) - transform.position).normalized;
+        transform.forward = Vector3.Lerp(transform.forward, targetDirection, Time.deltaTime * rotateSpeed);
 
     }
 

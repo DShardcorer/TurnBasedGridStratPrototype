@@ -11,7 +11,7 @@ public abstract class BaseAction : MonoBehaviour
     protected int actionPointCost;
 
     protected GridPosition currentGridPosition;
-    protected GridPosition targetGridPoisition;
+    protected GridPosition targetGridPosition;
     protected Coroutine actionCoroutine;
 
     protected virtual void Start()
@@ -35,12 +35,13 @@ public abstract class BaseAction : MonoBehaviour
 
     public virtual void PerformAction(GridPosition targetGridPosition, Action onActionCompleted)
     {
+        this.targetGridPosition = targetGridPosition;
         this.OnActionCompleted = onActionCompleted;
         if (actionCoroutine != null)
         {
             StopCoroutine(actionCoroutine);
         }
-        actionCoroutine = StartCoroutine(ActionCoroutine(targetGridPoisition));
+        actionCoroutine = StartCoroutine(ActionCoroutine(this.targetGridPosition));
     }
 
     protected abstract IEnumerator ActionCoroutine(GridPosition targetGridPosition);
