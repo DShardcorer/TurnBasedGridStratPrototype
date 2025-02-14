@@ -14,6 +14,13 @@ public class ShootAction : BaseAction
         CoolOff,
         Finished
     }
+    public event EventHandler<OnShootTriggeredEventArgs> OnShootTriggered;
+
+    public class OnShootTriggeredEventArgs: EventArgs
+    {
+        public Unit shootingUnit;
+        public Unit targetUnit;
+    }
     private State state;
     private float timer;
 
@@ -27,10 +34,7 @@ public class ShootAction : BaseAction
     {
         return "Shoot";
     }
-    private void Awake()
-    {
-        SetActionPointCost(1);
-    }
+
 
     private float aimingTimer = 1f;
     private float shootingTimer = 0.3f;
@@ -39,13 +43,7 @@ public class ShootAction : BaseAction
 
     protected override IEnumerator ActionCoroutine(GridPosition targetGridPosition)
     {
-
-        targetUnit = GridManager.Instance.GetUnitAtGridPosition(base.targetGridPosition);
-        if (targetUnit == null)
-        {
-            Debug.LogWarning("Target unit is null");
-            yield break;
-        }
+        SetTargetUnit();
         state = State.Aiming;
         timer = aimingTimer;
         while (state != State.Finished)
@@ -61,6 +59,11 @@ public class ShootAction : BaseAction
             }
             yield return null;
         }
+    }
+
+    private void SetTargetUnit()
+    {
+        targetUnit = GridManager.Instance.GetUnitAtGridPosition(targetGridPosition);
     }
 
     private void HandleAiming(GridPosition targetGridPosition)
@@ -94,6 +97,7 @@ public class ShootAction : BaseAction
 
     private void Shoot()
     {
+        OnShootTriggered?.Invoke(this, new OnShootTriggeredEventArgs { shootingUnit = unit, targetUnit = targetUnit });
         targetUnit.Damage();
     }
 

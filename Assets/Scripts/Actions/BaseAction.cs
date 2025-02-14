@@ -14,6 +14,10 @@ public abstract class BaseAction : MonoBehaviour
     protected GridPosition targetGridPosition;
     protected Coroutine actionCoroutine;
 
+    protected virtual void Awake()
+    {
+        SetActionPointCost(1);
+    }
     protected virtual void Start()
     {
         unit = GetComponent<Unit>();

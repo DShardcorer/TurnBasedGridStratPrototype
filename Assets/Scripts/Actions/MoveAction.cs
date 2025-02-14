@@ -14,11 +14,6 @@ public class MoveAction : BaseAction
     public event EventHandler OnMoveCompleted;
 
     public float speed = 5.0f;
-    private void Awake()
-    {
-        targetPosition = transform.position;
-        SetActionPointCost(1);
-    }
     protected override void Start()
     {
         base.Start();
