@@ -14,6 +14,7 @@ public class Unit : MonoBehaviour
     [SerializeField] private UnitType unitType = UnitType.Player;
     private GridPosition gridPosition;
     private Coroutine updateGridPositionCoroutine;
+    private HealthSystem healthSystem;
     private MoveAction moveAction;
     private SpinAction spinAction;
 
@@ -24,14 +25,15 @@ public class Unit : MonoBehaviour
     private BaseAction[] baseActionArray;
 
 
-
+    private void Awake()
+    {
+        GetComponents();
+        SubcribeToComponents();
+    }
     private void Start()
     {
         AssignInitialFields();
-        GetComponents();
-        SubcribeToActionComponents();
-        SubscribeToSystems();
-
+        SubscribeToExternalSystems();
     }
 
 
@@ -44,19 +46,26 @@ public class Unit : MonoBehaviour
 
     private void GetComponents()
     {
+        healthSystem = GetComponent<HealthSystem>();
         moveAction = GetComponent<MoveAction>();
         spinAction = GetComponent<SpinAction>();
         baseActionArray = GetComponents<BaseAction>();
     }
 
 
-    private void SubcribeToActionComponents()
+    private void SubcribeToComponents()
     {
+        healthSystem.OnDeath += HealthSystem_OnDeath;
         moveAction.OnMoveInitiated += MoveAction_OnMoveInitiated;
         moveAction.OnMoveCompleted += MoveAction_OnMoveCompleted;
     }
 
-    private void SubscribeToSystems()
+    private void HealthSystem_OnDeath(object sender, EventArgs e)
+    {
+        Destroy(gameObject);
+    }
+
+    private void SubscribeToExternalSystems()
     {
         TurnSystem.Instance.OnTurnEnd += TurnSystem_OnTurnEnd;
     }
@@ -172,10 +181,11 @@ public class Unit : MonoBehaviour
     }
 
 
-    public void Damage()
+    public void Damage(int damageAmount)
     {
-        Debug.Log("Unit" + gameObject.name + "damaged!");
+        healthSystem.TakeDamage(damageAmount);
     }
+
 
 
 

@@ -16,7 +16,6 @@ public class GridManager : MonoBehaviour
         }
         else
         {
-            Debug.Log("GridManager is created");
             Instance = this;
         }
     }

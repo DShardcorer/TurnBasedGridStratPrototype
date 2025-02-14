@@ -98,7 +98,8 @@ public class ShootAction : BaseAction
     private void Shoot()
     {
         OnShootTriggered?.Invoke(this, new OnShootTriggeredEventArgs { shootingUnit = unit, targetUnit = targetUnit });
-        targetUnit.Damage();
+        int damageAmount = 100;
+        targetUnit.Damage(damageAmount);
     }
 
     public override List<GridPosition> GetValidActionGridPositions()

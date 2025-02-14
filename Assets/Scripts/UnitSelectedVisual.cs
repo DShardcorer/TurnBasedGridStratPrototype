@@ -35,4 +35,8 @@ public class UnitSelectedVisual : MonoBehaviour
     {
         gameObject.SetActive(true);
     }
+    private void OnDestroy()
+    {
+        UnitActionSystem.Instance.OnUnitSelected -= OnUnitSelected;
+    }
 }

@@ -100,6 +100,7 @@ public class UnitActionSystem : MonoBehaviour
             }
 
             SetSelectedUnit(unit);
+            SetSelectedAction(unit.GetMoveAction());
 
 
         }

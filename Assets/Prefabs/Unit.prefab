@@ -41,10 +41,12 @@ GameObject:
   m_Component:
   - component: {fileID: 8027347310333365458}
   - component: {fileID: 3985097564830286549}
+  - component: {fileID: 2199505944779780446}
   - component: {fileID: 6394599326119468426}
   - component: {fileID: 793154101295294391}
   - component: {fileID: 4786909146888139963}
   - component: {fileID: 5148556034265580632}
+  - component: {fileID: 6485895862729156738}
   - component: {fileID: 8035700856383341076}
   m_Layer: 7
   m_Name: Unit
@@ -83,6 +85,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   unitType: 0
+--- !u!114 &2199505944779780446
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5949148389663805061}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 751e13d2f7f5b864392ba212138fd827, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &6394599326119468426
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -136,6 +150,22 @@ MonoBehaviour:
   bulletProjectilePrefab: {fileID: 9034075978598236594, guid: 97cf821b46808ea4eb182e7fc37e54db,
     type: 3}
   bulletSpawnPoint: {fileID: 5614984757985588039}
+--- !u!114 &6485895862729156738
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5949148389663805061}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 11d2d4072de955e46997b09f0a8584c5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerUnitRagdollPrefab: {fileID: 5949148389663805061, guid: 660887d5a3941994fa37a23cef43f313,
+    type: 3}
+  enemyUnitRagdollPrefab: {fileID: 5949148389663805061, guid: eaef505f92d7d904e966c5c0ad4ee9ef,
+    type: 3}
 --- !u!65 &8035700856383341076
 BoxCollider:
   m_ObjectHideFlags: 0
