@@ -18,7 +18,8 @@ public class SpinAction : BaseAction
             spinnedAmount += spinAddAmount;
             yield return null;
         }
-        OnActionCompleted?.Invoke();
+        onActionCompleted?.Invoke();
+        InvokeOnAnyActionCompleted();
     }
 
     public override string GetActionName()

@@ -6,6 +6,7 @@ using UnityEngine;
 public class ShootAction : BaseAction
 {
     private int maxShootGridDistance = 7;
+    [SerializeField] private int damageAmount = 30;
 
     private enum State
     {
@@ -59,6 +60,7 @@ public class ShootAction : BaseAction
             }
             yield return null;
         }
+        InvokeOnAnyActionCompleted();
     }
 
     private void SetTargetUnit()
@@ -90,7 +92,7 @@ public class ShootAction : BaseAction
                 break;
             case State.CoolOff:
                 state = State.Finished;
-                OnActionCompleted?.Invoke();
+                onActionCompleted?.Invoke();
                 break;
         }
     }
@@ -98,7 +100,6 @@ public class ShootAction : BaseAction
     private void Shoot()
     {
         OnShootTriggered?.Invoke(this, new OnShootTriggeredEventArgs { shootingUnit = unit, targetUnit = targetUnit });
-        int damageAmount = 100;
         targetUnit.Damage(damageAmount);
     }
 
@@ -144,6 +145,12 @@ public class ShootAction : BaseAction
         }
         return validGridPositions;
     }
+
+    public Unit GetTargetUnit()
+    {
+        return targetUnit;
+    }
+
 
 
 }

@@ -14,6 +14,7 @@ public class HealthSystem : MonoBehaviour
     public void TakeDamage(int damage)
     {
         health -= damage;
+        OnHealthChanged?.Invoke(this, EventArgs.Empty);
         if (health <= 0)
         {
             health = 0;
@@ -23,6 +24,11 @@ public class HealthSystem : MonoBehaviour
 
     private void HandleDeath()
     {
-       OnDeath?.Invoke(this, EventArgs.Empty);
+        OnDeath?.Invoke(this, EventArgs.Empty);
+    }
+
+    public float GetHealthNormalized()
+    {
+        return (float)health / maxHealth;
     }
 }

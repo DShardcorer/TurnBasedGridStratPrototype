@@ -7,7 +7,6 @@ public class MoveAction : BaseAction
 {
 
     private Vector3 targetPosition;
-    private Coroutine moveCoroutine;
     private int maxMovementGridDistance = 3;
 
     public event EventHandler OnMoveInitiated;
@@ -34,9 +33,10 @@ public class MoveAction : BaseAction
             {
                 transform.position = targetPosition;
                 OnMoveCompleted?.Invoke(this, EventArgs.Empty);
-                OnActionCompleted?.Invoke();
+                onActionCompleted?.Invoke();
             }
         }
+        InvokeOnAnyActionCompleted();
     }
 
     private void MoveByFrame(Vector3 targetPosition)
@@ -48,17 +48,6 @@ public class MoveAction : BaseAction
         currentGridPosition = GridManager.Instance.GetGridPosition(transform.position);
     }
 
-    public override void PerformAction(GridPosition targetGridPosition, Action onActionCompleted)
-    {
-        this.OnActionCompleted = onActionCompleted;
-
-        if (moveCoroutine != null)
-        {
-            StopCoroutine(moveCoroutine);
-        }
-        moveCoroutine = StartCoroutine(ActionCoroutine(targetGridPosition));
-
-    }
     public override List<GridPosition> GetValidActionGridPositions()
     {
 

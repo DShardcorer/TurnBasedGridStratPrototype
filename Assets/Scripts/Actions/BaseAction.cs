@@ -6,7 +6,10 @@ using UnityEngine;
 public abstract class BaseAction : MonoBehaviour
 {
     protected Unit unit;
-    public Action OnActionCompleted;
+
+    public static event EventHandler OnAnyActionInitiated;
+    public static event EventHandler OnAnyActionCompleted;
+    public Action onActionCompleted;
 
     protected int actionPointCost;
 
@@ -40,15 +43,20 @@ public abstract class BaseAction : MonoBehaviour
     public virtual void PerformAction(GridPosition targetGridPosition, Action onActionCompleted)
     {
         this.targetGridPosition = targetGridPosition;
-        this.OnActionCompleted = onActionCompleted;
+        this.onActionCompleted = onActionCompleted;
         if (actionCoroutine != null)
         {
             StopCoroutine(actionCoroutine);
         }
         actionCoroutine = StartCoroutine(ActionCoroutine(this.targetGridPosition));
+        OnAnyActionInitiated?.Invoke(this, EventArgs.Empty);
     }
 
     protected abstract IEnumerator ActionCoroutine(GridPosition targetGridPosition);
+    protected void InvokeOnAnyActionCompleted()
+    {
+        OnAnyActionCompleted?.Invoke(this, EventArgs.Empty);
+    }
 
     public virtual bool IsValidActionGridPosition(GridPosition gridPosition)
     {

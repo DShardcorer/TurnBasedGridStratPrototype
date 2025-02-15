@@ -186,8 +186,13 @@ public class Unit : MonoBehaviour
         healthSystem.TakeDamage(damageAmount);
     }
 
+    private void OnDestroy()
+    {
+        UnsubscribeFromExternalSystems();        
+    }
 
-
-
-
+    private void UnsubscribeFromExternalSystems()
+    {
+        TurnSystem.Instance.OnTurnEnd -= TurnSystem_OnTurnEnd;
+    }
 }
