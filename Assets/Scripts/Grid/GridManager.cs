@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -8,6 +9,8 @@ public class GridManager : MonoBehaviour
     
     [SerializeField] private GameObject debugGridObject;
     private GridSystem gridSystem;
+
+    public event EventHandler OnUnitMoved;
 
     private void Awake() {
         if(Instance != null)
@@ -55,6 +58,7 @@ public class GridManager : MonoBehaviour
     {
         RemoveUnitAtGridPosition(oldGridPosition);
         SetUnitAtGridPosition(unit, newGridPosition);
+        OnUnitMoved?.Invoke(this, EventArgs.Empty);
     }
     public bool IsGridPositionOccupied(GridPosition gridPosition)
     {

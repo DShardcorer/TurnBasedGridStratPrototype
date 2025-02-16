@@ -5,6 +5,14 @@ using UnityEngine;
 
 public abstract class BaseAction : MonoBehaviour
 {
+    public enum ActionType
+    {
+        Movement,
+        Attack,
+        Heal,
+        Support,
+    }
+    protected ActionType actionType;
     protected Unit unit;
 
     public static event EventHandler OnAnyActionInitiated;
@@ -65,4 +73,9 @@ public abstract class BaseAction : MonoBehaviour
     }
 
     public abstract List<GridPosition> GetValidActionGridPositions();
+
+    public ActionType GetActionType()
+    {
+        return actionType;
+    }
 }

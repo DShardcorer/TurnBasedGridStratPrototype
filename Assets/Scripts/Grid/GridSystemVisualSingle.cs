@@ -9,7 +9,8 @@ public class GridSystemVisualSingle : MonoBehaviour
     public void Hide(){
         meshRenderer.enabled = false;
     }
-    public void Show(){
+    public void Show(GridSystemVisual.GridSystemVisualType gridSystemVisualType){
         meshRenderer.enabled = true;
+        meshRenderer.material = GridSystemVisual.Instance.GetMaterialForGridSystemVisualType(gridSystemVisualType);
     }
 }

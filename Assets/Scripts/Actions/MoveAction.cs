@@ -5,7 +5,6 @@ using UnityEngine;
 
 public class MoveAction : BaseAction
 {
-
     private Vector3 targetPosition;
     private int maxMovementGridDistance = 3;
 
@@ -13,6 +12,13 @@ public class MoveAction : BaseAction
     public event EventHandler OnMoveCompleted;
 
     public float speed = 5.0f;
+
+    protected override void Awake()
+    {
+        base.Awake();
+        actionType = ActionType.Movement;
+    }
+
     protected override void Start()
     {
         base.Start();

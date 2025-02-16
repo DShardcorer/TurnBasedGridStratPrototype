@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -8,6 +9,25 @@ public class GridSystemVisual : MonoBehaviour
     [SerializeField] private GameObject gridSystemVisualSinglePrefab;
 
     private GridSystemVisualSingle[,] gridSystemVisualSingleArray;
+        [Serializable]
+    public struct GridSystemVisualTypeMaterial
+    {
+        public GridSystemVisualType gridSystemVisualType;
+        public Material material;
+    }
+    public enum GridSystemVisualType
+    {
+        White,
+        Blue,
+        Red,
+        SoftRed,
+        Green
+        
+    }
+
+    [SerializeField] private List<GridSystemVisualTypeMaterial> gridSystemVisualTypeMaterialList;
+
+
 
     private void Awake()
     {
@@ -33,11 +53,23 @@ public class GridSystemVisual : MonoBehaviour
                 gridSystemVisualSingleArray[x, y] = gridSystemVisualSingleGameObject.GetComponent<GridSystemVisualSingle>();
             }
         }
+
+        UnitActionSystem.Instance.OnActionSelected += UnitActionSystem_OnActionSelected;
+        GridManager.Instance.OnUnitMoved += GridManager_OnAnyUnitMoved;
+        HideAllGridPositions();
     }
-    private void Update()
+
+    private void GridManager_OnAnyUnitMoved(object sender, EventArgs e)
     {
         UpdateGridVisual();
     }
+
+    private void UnitActionSystem_OnActionSelected(object sender, UnitActionSystem.OnActionSelectedEventArgs e)
+    {
+        UpdateGridVisual();
+    }
+
+
 
     public void HideAllGridPositions()
     {
@@ -50,33 +82,72 @@ public class GridSystemVisual : MonoBehaviour
         }
     }
 
-    public void ShowAllGridPositions()
+    public void ShowAllGridPositions(GridSystemVisualType gridSystemVisualType)
     {
         for (int x = 0; x < GridManager.Instance.GetWidth(); x++)
         {
             for (int y = 0; y < GridManager.Instance.GetLength(); y++)
             {
-                gridSystemVisualSingleArray[x, y].Show();
+                gridSystemVisualSingleArray[x, y].Show(gridSystemVisualType);
             }
         }
     }
 
-    public void ShowGridPostionList(List<GridPosition> gridPositionList)
+    public void ShowGridPostionList(List<GridPosition> gridPositionList, GridSystemVisualType gridSystemVisualType)
     {
         foreach (GridPosition gridPosition in gridPositionList)
         {
-            gridSystemVisualSingleArray[gridPosition.x, gridPosition.y].Show();
+            gridSystemVisualSingleArray[gridPosition.x, gridPosition.y].Show(gridSystemVisualType);
         }
     }
 
-    private void UpdateGridVisual(){
-            HideAllGridPositions();
-            if(UnitActionSystem.Instance.GetSelectedUnit() == null){
-                return;
+    private void UpdateGridVisual()
+    {
+        HideAllGridPositions();
+        if (UnitActionSystem.Instance.GetSelectedUnit() == null)
+        {
+            return;
+        }
+        BaseAction selectedAction = UnitActionSystem.Instance.GetSelectedAction();
+        List<GridPosition> gridPositionList = selectedAction.GetValidActionGridPositions();
+        GridSystemVisualType gridSystemVisualType;
+        switch(selectedAction.GetActionType())
+        {
+            case BaseAction.ActionType.Movement:
+                gridSystemVisualType = GridSystemVisualType.White;
+                break;
+            case BaseAction.ActionType.Attack:
+                //Convert selectedAction to ShootAction
+                ShootAction shootAction = (ShootAction)selectedAction;
+                gridSystemVisualType = GridSystemVisualType.Red;
+                ShowGridPostionList(shootAction.GetGridPositionsInActionRange(), GridSystemVisualType.SoftRed);
+                break;
+            case BaseAction.ActionType.Support:
+                gridSystemVisualType = GridSystemVisualType.Blue;
+                break;
+            case BaseAction.ActionType.Heal:
+                gridSystemVisualType = GridSystemVisualType.Green;
+                break;
+            default:
+                gridSystemVisualType = GridSystemVisualType.White;
+                break;
+        }
+
+
+        ShowGridPostionList(gridPositionList, gridSystemVisualType);
+    }
+
+    public Material GetMaterialForGridSystemVisualType(GridSystemVisualType gridSystemVisualType)
+    {
+        foreach (GridSystemVisualTypeMaterial gridSystemVisualTypeMaterial in gridSystemVisualTypeMaterialList)
+        {
+            if (gridSystemVisualTypeMaterial.gridSystemVisualType == gridSystemVisualType)
+            {
+                return gridSystemVisualTypeMaterial.material;
             }
-            List<GridPosition> gridPositionList = 
-            UnitActionSystem.Instance.GetSelectedAction().GetValidActionGridPositions();
-            ShowGridPostionList(gridPositionList);
+        }
+        Debug.LogError("GridSystemVisualType not found in gridSystemVisualTypeMaterialList");
+        return null;
     }
 
 }

@@ -6,6 +6,12 @@ using UnityEngine;
 public class SpinAction : BaseAction
 {
 
+    protected override void Awake()
+    {
+        base.Awake();
+        actionType = ActionType.Support;
+    }
+
 
     protected override IEnumerator ActionCoroutine(GridPosition targetGridPosition)
     {

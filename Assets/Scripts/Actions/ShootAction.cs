@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class ShootAction : BaseAction
 {
-    private int maxShootGridDistance = 7;
+    private int maxShootGridDistance = 4;
     [SerializeField] private int damageAmount = 30;
 
     private enum State
@@ -17,7 +17,7 @@ public class ShootAction : BaseAction
     }
     public event EventHandler<OnShootTriggeredEventArgs> OnShootTriggered;
 
-    public class OnShootTriggeredEventArgs: EventArgs
+    public class OnShootTriggeredEventArgs : EventArgs
     {
         public Unit shootingUnit;
         public Unit targetUnit;
@@ -26,6 +26,12 @@ public class ShootAction : BaseAction
     private float timer;
 
     private Unit targetUnit;
+
+    protected override void Awake()
+    {
+        base.Awake();
+        actionType = ActionType.Attack;
+    }
 
     protected override void Start()
     {
@@ -145,6 +151,37 @@ public class ShootAction : BaseAction
         }
         return validGridPositions;
     }
+    public List<GridPosition> GetGridPositionsInActionRange()
+    {
+        List<GridPosition> gridPositionInActionRange = new List<GridPosition>();
+        for (int width = -maxShootGridDistance; width <= maxShootGridDistance; width++)
+        {
+            for (int length = -maxShootGridDistance; length <= maxShootGridDistance; length++)
+            {
+                GridPosition offsetGridPosition = new GridPosition(width, length);
+                GridPosition testGridPosition = currentGridPosition + offsetGridPosition;
+
+                if (!GridManager.Instance.IsValidGridPosition(testGridPosition))
+                {
+                    continue;
+                }
+                int testDistance = (int)Mathf.Sqrt(Mathf.Abs(width) ^ 2 + Mathf.Abs(length) ^ 2);
+                if (testDistance > maxShootGridDistance)
+                {
+                    continue;
+                }
+                if (currentGridPosition == testGridPosition)
+                {
+                    continue;
+                }
+                gridPositionInActionRange.Add(testGridPosition);
+            }
+        }
+        return gridPositionInActionRange;
+    }
+            
+
+
 
     public Unit GetTargetUnit()
     {
