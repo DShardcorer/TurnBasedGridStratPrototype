@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class Unit : MonoBehaviour
 {
+    public static event EventHandler OnAnyUnitSpawned;
+    public static event EventHandler OnAnyUnitDeath;
     public enum UnitType
     {
         Player,
@@ -30,10 +32,29 @@ public class Unit : MonoBehaviour
         GetComponents();
         SubcribeToComponents();
     }
+    private void OnEnable()
+    {
+        SubscribeToExternalSystems();
+    }
+
+    private void SubscribeToExternalSystems()
+    {
+        StartCoroutine(SubscribeToExternalSingletons());
+    }
+    private IEnumerator SubscribeToExternalSingletons()
+    {
+        while (TurnSystem.Instance == null)
+        {
+            yield return null;
+        }
+        TurnSystem.Instance.OnTurnEnd += TurnSystem_OnTurnEnd;
+    }
+
     private void Start()
     {
         AssignInitialFields();
-        SubscribeToExternalSystems();
+
+        OnAnyUnitSpawned?.Invoke(this, EventArgs.Empty);
     }
 
 
@@ -60,15 +81,8 @@ public class Unit : MonoBehaviour
         moveAction.OnMoveCompleted += MoveAction_OnMoveCompleted;
     }
 
-    private void HealthSystem_OnDeath(object sender, EventArgs e)
-    {
-        Destroy(gameObject);
-    }
 
-    private void SubscribeToExternalSystems()
-    {
-        TurnSystem.Instance.OnTurnEnd += TurnSystem_OnTurnEnd;
-    }
+
 
 
 
@@ -185,10 +199,15 @@ public class Unit : MonoBehaviour
     {
         healthSystem.TakeDamage(damageAmount);
     }
-
-    private void OnDestroy()
+    private void HealthSystem_OnDeath(object sender, EventArgs e)
     {
-        UnsubscribeFromExternalSystems();        
+        GridManager.Instance.RemoveUnitAtGridPosition(gridPosition);
+        Destroy(gameObject);
+        OnAnyUnitDeath?.Invoke(this, EventArgs.Empty);
+    }
+    private void OnDisable()
+    {
+        UnsubscribeFromExternalSystems();
     }
 
     private void UnsubscribeFromExternalSystems()

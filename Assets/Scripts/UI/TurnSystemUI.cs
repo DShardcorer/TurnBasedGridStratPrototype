@@ -11,9 +11,30 @@ public class TurnSystemUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI turnNumberText;
     [SerializeField] private GameObject enemyTurnBlocker;
 
+    private void OnEnable()
+    {
+        SubscribeToExternalSystems();
+    }
+
+    private void SubscribeToExternalSystems()
+    {
+        StartCoroutine(SubscribeToExternalSingletons());
+    }
+    private IEnumerator SubscribeToExternalSingletons()
+    {
+        while (TurnSystem.Instance == null)
+        {
+            yield return null;
+        }
+        TurnSystem.Instance.OnTurnEnd += TurnSystem_OnTurnEnd;
+    }
+
+
+
+
+
     private void Start()
     {
-        TurnSystem.Instance.OnTurnEnd += TurnSystem_OnTurnEnd;
         endTurnButton.onClick.AddListener(() =>
         {
             TurnSystem.Instance.EndTurn();

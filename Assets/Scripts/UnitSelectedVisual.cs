@@ -7,10 +7,27 @@ public class UnitSelectedVisual : MonoBehaviour
 {
     [SerializeField] private Unit unit;
 
+    private void OnEnable()
+    {
+        SubscibeToExternalSystems();
+    }
+
+    private void SubscibeToExternalSystems()
+    {
+       StartCoroutine(SubscribeToExternalSingletons());
+    }
+    private IEnumerator SubscribeToExternalSingletons()
+    {
+        while (UnitActionSystem.Instance == null)
+        {
+            yield return null;
+        }
+        UnitActionSystem.Instance.OnUnitSelected += OnUnitSelected;
+    }
 
     private void Start()
     {
-        UnitActionSystem.Instance.OnUnitSelected += OnUnitSelected;
+        
         Hide();
     }
 
@@ -35,7 +52,7 @@ public class UnitSelectedVisual : MonoBehaviour
     {
         gameObject.SetActive(true);
     }
-    private void OnDestroy()
+    private void OnDisable()
     {
         UnitActionSystem.Instance.OnUnitSelected -= OnUnitSelected;
     }

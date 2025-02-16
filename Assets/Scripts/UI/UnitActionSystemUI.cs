@@ -28,14 +28,35 @@ public class UnitActionSystemUI : MonoBehaviour
             actionButtonUIList = new List<ActionButtonUI>();
         }
     }
-
-    private void Start()
+    private void OnEnable()
     {
+        SubscribeToExternalSystems();
+    }
+
+    private void SubscribeToExternalSystems()
+    {
+        SubsribeToExternalSingletons();
+        Unit.OnAnyActionPointChanged += Unit_OnAnyActionPointChanged;
+    }
+
+    private void SubsribeToExternalSingletons()
+    {
+        StartCoroutine(SubscribeToExternalSingletons());
+    }
+    private IEnumerator SubscribeToExternalSingletons()
+    {
+        while (UnitActionSystem.Instance == null)
+        {
+            yield return null;
+        }
         UnitActionSystem.Instance.OnUnitSelected += UnitActionSystem_OnUnitSelected;
         UnitActionSystem.Instance.OnActionSelected += UnitActionSystem_OnActionSelected;
         UnitActionSystem.Instance.OnActionInitiated += UnitActionSystem_OnActionInitiated;
         UnitActionSystem.Instance.OnActionCompleted += UnitActionSystem_OnActionCompleted;
-        Unit.OnAnyActionPointChanged += Unit_OnAnyActionPointChanged;
+    }
+
+    private void Start()
+    {
         ClearActionButtons();
         busyActionBlocker.SetActive(false);
         actionPointText.text = "";

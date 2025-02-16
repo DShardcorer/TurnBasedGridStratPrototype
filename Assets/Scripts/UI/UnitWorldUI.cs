@@ -15,11 +15,19 @@ public class UnitWorldUI : MonoBehaviour
     private void Awake()
     {
         healthSystem = unit.GetComponent<HealthSystem>();
-        Unit.OnAnyActionPointChanged += Unit_OnAnyActionPointChanged;
         UpdateActionPointsText();
-        healthSystem.OnHealthChanged += HealthSystem_OnHealthChanged;
         UpdateHealthBar();
-        
+
+    }
+    private void OnEnable()
+    {
+        SubscribeToExternalSystem();
+    }
+
+    private void SubscribeToExternalSystem()
+    {
+        Unit.OnAnyActionPointChanged += Unit_OnAnyActionPointChanged;
+        healthSystem.OnHealthChanged += HealthSystem_OnHealthChanged;
     }
 
     private void HealthSystem_OnHealthChanged(object sender, EventArgs e)
@@ -42,7 +50,7 @@ public class UnitWorldUI : MonoBehaviour
         actionPointsText.text = unit.GetActionPoints().ToString();
     }
 
-    private void OnDestroy()
+    private void OnDisable()
     {
         Unit.OnAnyActionPointChanged -= Unit_OnAnyActionPointChanged;
     }

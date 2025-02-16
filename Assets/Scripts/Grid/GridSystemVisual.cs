@@ -9,7 +9,7 @@ public class GridSystemVisual : MonoBehaviour
     [SerializeField] private GameObject gridSystemVisualSinglePrefab;
 
     private GridSystemVisualSingle[,] gridSystemVisualSingleArray;
-        [Serializable]
+    [Serializable]
     public struct GridSystemVisualTypeMaterial
     {
         public GridSystemVisualType gridSystemVisualType;
@@ -22,7 +22,7 @@ public class GridSystemVisual : MonoBehaviour
         Red,
         SoftRed,
         Green
-        
+
     }
 
     [SerializeField] private List<GridSystemVisualTypeMaterial> gridSystemVisualTypeMaterialList;
@@ -40,6 +40,25 @@ public class GridSystemVisual : MonoBehaviour
             Instance = this;
         }
     }
+    private void OnEnable()
+    {
+        SubscribeToExternalSystems();
+    }
+
+    private void SubscribeToExternalSystems()
+    {
+        StartCoroutine(SubscribeToExternalSingletons());
+    }
+    private IEnumerator SubscribeToExternalSingletons()
+    {
+        while (UnitActionSystem.Instance == null || GridManager.Instance == null)
+        {
+            yield return null;
+        }
+        UnitActionSystem.Instance.OnActionSelected += UnitActionSystem_OnActionSelected;
+        GridManager.Instance.OnUnitMoved += GridManager_OnAnyUnitMoved;
+    }
+
     private void Start()
     {
         gridSystemVisualSingleArray = new GridSystemVisualSingle[GridManager.Instance.GetWidth(), GridManager.Instance.GetLength()];
@@ -54,8 +73,7 @@ public class GridSystemVisual : MonoBehaviour
             }
         }
 
-        UnitActionSystem.Instance.OnActionSelected += UnitActionSystem_OnActionSelected;
-        GridManager.Instance.OnUnitMoved += GridManager_OnAnyUnitMoved;
+
         HideAllGridPositions();
     }
 
@@ -111,7 +129,7 @@ public class GridSystemVisual : MonoBehaviour
         BaseAction selectedAction = UnitActionSystem.Instance.GetSelectedAction();
         List<GridPosition> gridPositionList = selectedAction.GetValidActionGridPositions();
         GridSystemVisualType gridSystemVisualType;
-        switch(selectedAction.GetActionType())
+        switch (selectedAction.GetActionType())
         {
             case BaseAction.ActionType.Movement:
                 gridSystemVisualType = GridSystemVisualType.White;
