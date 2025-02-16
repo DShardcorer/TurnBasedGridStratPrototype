@@ -7,10 +7,14 @@ public class MouseWorld : MonoBehaviour
     public static MouseWorld Instance { get; private set; }
     [SerializeField] private LayerMask mousePlaneLayerMask;
     [SerializeField] private LayerMask unitLayerMask;
-    private void Awake() {
-        if(Instance == null){
+    private void Awake()
+    {
+        if (Instance == null)
+        {
             Instance = this;
-        }else{
+        }
+        else
+        {
             Destroy(gameObject);
         }
     }
@@ -33,7 +37,8 @@ public class MouseWorld : MonoBehaviour
 
         Physics.Raycast(ray, out RaycastHit raycastHit, float.MaxValue, unitLayerMask);
 
-        if(raycastHit.collider != null){
+        if (raycastHit.collider != null)
+        {
             return raycastHit.collider.GetComponent<Unit>();
         }
         return null;

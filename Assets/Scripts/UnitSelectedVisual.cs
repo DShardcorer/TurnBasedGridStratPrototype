@@ -33,9 +33,9 @@ public class UnitSelectedVisual : MonoBehaviour
 
     private void OnUnitSelected(object sender, UnitActionSystem.OnUnitSelectedEventArgs e)
     {
+        Debug.Log("UnitSelectedVisual: OnUnitSelected");
         if (e.selectedUnit == unit)
         {
-
             Show();
         }
         else
@@ -46,6 +46,7 @@ public class UnitSelectedVisual : MonoBehaviour
 
     private void Hide()
     {
+        Debug.Log("UnitSelectedVisual: Hide");
         gameObject.SetActive(false);
     }
     private void Show()
