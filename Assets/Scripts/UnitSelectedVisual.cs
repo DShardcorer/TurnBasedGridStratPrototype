@@ -6,15 +6,18 @@ using UnityEngine;
 public class UnitSelectedVisual : MonoBehaviour
 {
     [SerializeField] private Unit unit;
+    private bool subscribedToExternalSystems = false;
 
     private void OnEnable()
     {
-        SubscibeToExternalSystems();
+        if (!subscribedToExternalSystems){
+            SubscibeToExternalSystems();
+        }
     }
 
     private void SubscibeToExternalSystems()
     {
-       StartCoroutine(SubscribeToExternalSingletons());
+        StartCoroutine(SubscribeToExternalSingletons());
     }
     private IEnumerator SubscribeToExternalSingletons()
     {
@@ -23,17 +26,14 @@ public class UnitSelectedVisual : MonoBehaviour
             yield return null;
         }
         UnitActionSystem.Instance.OnUnitSelected += OnUnitSelected;
-    }
-
-    private void Start()
-    {
-        
+        subscribedToExternalSystems = true;
         Hide();
     }
 
+
+
     private void OnUnitSelected(object sender, UnitActionSystem.OnUnitSelectedEventArgs e)
     {
-        Debug.Log("UnitSelectedVisual: OnUnitSelected");
         if (e.selectedUnit == unit)
         {
             Show();
@@ -46,14 +46,14 @@ public class UnitSelectedVisual : MonoBehaviour
 
     private void Hide()
     {
-        Debug.Log("UnitSelectedVisual: Hide");
         gameObject.SetActive(false);
     }
     private void Show()
     {
         gameObject.SetActive(true);
     }
-    private void OnDisable()
+
+    private void OnDestroy()
     {
         UnitActionSystem.Instance.OnUnitSelected -= OnUnitSelected;
     }

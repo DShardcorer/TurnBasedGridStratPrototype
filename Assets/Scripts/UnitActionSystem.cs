@@ -84,7 +84,6 @@ public class UnitActionSystem : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(0))
         {
-            Debug.Log("Mouse Clicked");
             Unit unit = MouseWorld.Instance.GetUnit();
 
             if (unit == null)
@@ -112,7 +111,6 @@ public class UnitActionSystem : MonoBehaviour
         selectedUnit = unit;
         SetSelectedAction(unit.GetMoveAction());
         OnUnitSelected?.Invoke(this, new OnUnitSelectedEventArgs { selectedUnit = unit });
-        Debug.Log("Unit Selected");
     }
 
     public void SetSelectedAction(BaseAction action)

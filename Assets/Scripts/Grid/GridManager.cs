@@ -6,14 +6,15 @@ using UnityEngine;
 public class GridManager : MonoBehaviour
 {
     public static GridManager Instance { get; private set; }
-    
+
     [SerializeField] private GameObject debugGridObject;
     private GridSystem gridSystem;
 
     public event EventHandler OnUnitMoved;
 
-    private void Awake() {
-        if(Instance != null)
+    private void Awake()
+    {
+        if (Instance != null)
         {
             Destroy(gameObject);
         }
@@ -21,12 +22,10 @@ public class GridManager : MonoBehaviour
         {
             Instance = this;
         }
-    }
-    private void Start()
-    {
         gridSystem = new GridSystem(7, 7, 2f);
         gridSystem.InstantiateDebugGridObjects(debugGridObject);
     }
+
 
 
 
@@ -37,7 +36,7 @@ public class GridManager : MonoBehaviour
     }
     public void SetUnitAtGridPosition(Unit unit, GridPosition gridPosition)
     {
-        GridObject gridObject =  gridSystem.GetGridObject(gridPosition);
+        GridObject gridObject = gridSystem.GetGridObject(gridPosition);
         gridObject.SetUnit(unit);
     }
     public void RemoveUnitAtGridPosition(GridPosition gridPosition)
