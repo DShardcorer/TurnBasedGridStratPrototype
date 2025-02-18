@@ -35,8 +35,11 @@ public class SpinAction : BaseAction
 
     public override List<GridPosition> GetValidActionGridPositions()
     {
-        List<GridPosition> validGridPositions = new List<GridPosition>();
-        validGridPositions.Add(GridManager.Instance.GetGridPosition(transform.position));
+        UpdateCurrentGridPosition();
+        List<GridPosition> validGridPositions = new List<GridPosition>
+        {
+            currentGridPosition
+        };
         return validGridPositions;
     }
     public override bool IsValidActionGridPosition(GridPosition gridPosition)
@@ -44,5 +47,8 @@ public class SpinAction : BaseAction
         return true;
     }
 
-
+    public override GridPositionActionValue GetGridPositionActionValue(GridPosition gridPosition)
+    {
+        return new GridPositionActionValue(gridPosition, 1);
+    }
 }

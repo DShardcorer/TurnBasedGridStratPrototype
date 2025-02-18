@@ -34,7 +34,7 @@ public class EnemyAI : MonoBehaviour
 
     private void Start()
     {
-
+        state = State.Waiting;
     }
     private void Update()
     {
@@ -42,6 +42,7 @@ public class EnemyAI : MonoBehaviour
         {
             return;
         }
+        Debug.Log("Enemy turn");
 
         switch (state)
         {
@@ -90,18 +91,45 @@ public class EnemyAI : MonoBehaviour
 
     private bool TryPerformEnemyAIAction(Unit unit, Action onEnemyAIActionCompleted)
     {
-        SpinAction selectedAction = unit.GetComponent<SpinAction>();
-        GridPosition gridPosition = unit.GetGridPosition();
+        GridPositionActionValue bestGridPositionActionValue = null;
+        BaseAction bestBaseAction = null;
+        BaseAction[] baseActionArray = unit.GetBaseActionArray();
+        foreach (BaseAction baseAction in baseActionArray)
+        {
+            if (!unit.CanSpendActionPointsToPerformAction(baseAction))
+            {
+                continue;
+            }
+            if(baseAction.GetValidActionGridPositions().Count == 0)
+            {
+                continue;
+            }
+            if (bestGridPositionActionValue == null)
+            {
+                bestBaseAction = baseAction;
+                bestGridPositionActionValue = baseAction.GetGridPositionWithBestActionValue();
+            }
+            else
+            {
+                GridPositionActionValue gridPositionActionValue = baseAction.GetGridPositionWithBestActionValue();
+                if (gridPositionActionValue.actionValue > bestGridPositionActionValue.actionValue)
+                {
+                    bestBaseAction = baseAction;
+                    bestGridPositionActionValue = gridPositionActionValue;
+                }
 
-        if (!selectedAction.IsValidActionGridPosition(gridPosition))
+            }
+        }
+
+        if (bestBaseAction == null || bestGridPositionActionValue == null)
         {
             return false;
         }
-        if (!unit.TrySpendActionPointsToPerformAction(selectedAction))
-        {
-            return false;
-        }
-        selectedAction.PerformAction(gridPosition, onEnemyAIActionCompleted);
+
+        GridPosition actionGridPosition = bestGridPositionActionValue.gridPosition;
+        unit.TrySpendActionPointsToPerformAction(bestBaseAction);
+        Debug.Log("Enemy AI performing action: " + bestBaseAction.GetActionName());
+        bestBaseAction.PerformAction(actionGridPosition, onEnemyAIActionCompleted);
         onEnemyAIActionCompleted();
         return true;
     }
@@ -113,5 +141,6 @@ public class EnemyAI : MonoBehaviour
             return;
         }
         timer = 2f;
+        state = State.TakingTurn;
     }
 }

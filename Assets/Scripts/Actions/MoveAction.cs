@@ -93,4 +93,10 @@ public class MoveAction : BaseAction
     {
         return "Move";
     }
+
+    public override GridPositionActionValue GetGridPositionActionValue(GridPosition gridPosition)
+    {
+        int targetCountAtGridPosition = unit.GetShootAction().GetTargetCountAtGridPosition(gridPosition);
+        return new GridPositionActionValue(gridPosition, 10 * targetCountAtGridPosition);
+    }
 }

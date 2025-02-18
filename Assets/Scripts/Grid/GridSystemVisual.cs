@@ -139,6 +139,7 @@ public class GridSystemVisual : MonoBehaviour
                 ShootAction shootAction = (ShootAction)selectedAction;
                 gridSystemVisualType = GridSystemVisualType.Red;
                 ShowGridPostionList(shootAction.GetGridPositionsInActionRange(), GridSystemVisualType.SoftRed);
+                Debug.Log("Showing grid positions in action range");
                 break;
             case BaseAction.ActionType.Support:
                 gridSystemVisualType = GridSystemVisualType.Blue;

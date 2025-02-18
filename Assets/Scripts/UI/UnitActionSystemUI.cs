@@ -53,6 +53,7 @@ public class UnitActionSystemUI : MonoBehaviour
         UnitActionSystem.Instance.OnActionSelected += UnitActionSystem_OnActionSelected;
         UnitActionSystem.Instance.OnActionInitiated += UnitActionSystem_OnActionInitiated;
         UnitActionSystem.Instance.OnActionCompleted += UnitActionSystem_OnActionCompleted;
+        Debug.Log("Subscribed to UnitActionSystem");
     }
 
     private void Start()
@@ -125,8 +126,13 @@ public class UnitActionSystemUI : MonoBehaviour
     }
     private void UpdateActionPointText()
     {
-        int actionPoints = UnitActionSystem.Instance.GetSelectedUnit().GetActionPoints();
-        int maxActionPoints = UnitActionSystem.Instance.GetSelectedUnit().GetMaxActionPoints();
+        Unit unit = UnitActionSystem.Instance.GetSelectedUnit();
+        if (unit == null)
+        {
+            return;
+        }
+        int actionPoints = unit.GetActionPoints();
+        int maxActionPoints = unit.GetMaxActionPoints();
         actionPointText.text = "Action Points: " + actionPoints + "/" + maxActionPoints;
     }
 }

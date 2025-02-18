@@ -78,4 +78,28 @@ public abstract class BaseAction : MonoBehaviour
     {
         return actionType;
     }
+
+    public abstract GridPositionActionValue GetGridPositionActionValue(GridPosition gridPosition);
+
+    public GridPositionActionValue GetGridPositionWithBestActionValue()
+    {
+        List<GridPosition> validGridPositions = GetValidActionGridPositions();
+        List<GridPositionActionValue> gridPositionActionValues = new List<GridPositionActionValue>();
+        foreach (GridPosition gridPosition in validGridPositions)
+        {
+            gridPositionActionValues.Add(GetGridPositionActionValue(gridPosition));
+        }
+        if(gridPositionActionValues.Count == 0)
+        {
+            Debug.LogError("No valid grid positions for action: " + GetActionName());
+            return null;
+        }
+        gridPositionActionValues.Sort((GridPositionActionValue a, GridPositionActionValue b) => b.actionValue - a.actionValue);
+        return gridPositionActionValues[0];
+
+    }
+    public void UpdateCurrentGridPosition()
+    {
+        currentGridPosition = GridManager.Instance.GetGridPosition(transform.position);
+    }
 }

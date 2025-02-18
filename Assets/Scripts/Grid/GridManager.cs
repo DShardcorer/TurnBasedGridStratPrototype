@@ -22,7 +22,7 @@ public class GridManager : MonoBehaviour
         {
             Instance = this;
         }
-        gridSystem = new GridSystem(7, 7, 2f);
+        gridSystem = new GridSystem(9, 9, 2f);
         gridSystem.InstantiateDebugGridObjects(debugGridObject);
     }
 

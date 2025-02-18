@@ -30,6 +30,7 @@ public class ShootAction : BaseAction
     protected override void Awake()
     {
         base.Awake();
+        SetActionPointCost(2);
         actionType = ActionType.Attack;
     }
 
@@ -108,8 +109,12 @@ public class ShootAction : BaseAction
         OnShootTriggered?.Invoke(this, new OnShootTriggeredEventArgs { shootingUnit = unit, targetUnit = targetUnit });
         targetUnit.Damage(damageAmount);
     }
+    public override List<GridPosition> GetValidActionGridPositions(){
+        UpdateCurrentGridPosition();
+        return GetValidActionGridPositions(currentGridPosition);
+    }
 
-    public override List<GridPosition> GetValidActionGridPositions()
+    public List<GridPosition> GetValidActionGridPositions(GridPosition gridPosition)
     {
         List<GridPosition> validGridPositions = new List<GridPosition>();
         for (int width = -maxShootGridDistance; width <= maxShootGridDistance; width++)
@@ -117,7 +122,7 @@ public class ShootAction : BaseAction
             for (int length = -maxShootGridDistance; length <= maxShootGridDistance; length++)
             {
                 GridPosition offsetGridPosition = new GridPosition(width, length);
-                GridPosition testGridPosition = currentGridPosition + offsetGridPosition;
+                GridPosition testGridPosition = gridPosition + offsetGridPosition;
 
                 if (!GridManager.Instance.IsValidGridPosition(testGridPosition))
                 {
@@ -130,7 +135,7 @@ public class ShootAction : BaseAction
                 }
 
 
-                if (currentGridPosition == testGridPosition)
+                if (gridPosition == testGridPosition)
                 {
                     continue;
                 }
@@ -153,6 +158,7 @@ public class ShootAction : BaseAction
     }
     public List<GridPosition> GetGridPositionsInActionRange()
     {
+        UpdateCurrentGridPosition();
         List<GridPosition> gridPositionInActionRange = new List<GridPosition>();
         for (int width = -maxShootGridDistance; width <= maxShootGridDistance; width++)
         {
@@ -188,6 +194,14 @@ public class ShootAction : BaseAction
         return targetUnit;
     }
 
+    public override GridPositionActionValue GetGridPositionActionValue(GridPosition gridPosition)
+    {
+        Unit targetUnit = GridManager.Instance.GetUnitAtGridPosition(gridPosition);
+        float healthNormalized = targetUnit.GetHealthSystem().GetHealthNormalized();
+        return new GridPositionActionValue(gridPosition, Mathf.RoundToInt(100 + 100*(1- healthNormalized)));
+    }
 
-
+    public int GetTargetCountAtGridPosition(GridPosition gridPosition){
+        return GetValidActionGridPositions(gridPosition).Count;
+    }
 }

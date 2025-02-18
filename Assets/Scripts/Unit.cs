@@ -20,6 +20,8 @@ public class Unit : MonoBehaviour
     private MoveAction moveAction;
     private SpinAction spinAction;
 
+    private ShootAction shootAction;
+
     private const int MAX_ACTION_POINTS = 3;
     private int actionPoints = MAX_ACTION_POINTS;
 
@@ -70,6 +72,7 @@ public class Unit : MonoBehaviour
         healthSystem = GetComponent<HealthSystem>();
         moveAction = GetComponent<MoveAction>();
         spinAction = GetComponent<SpinAction>();
+        shootAction = GetComponent<ShootAction>();
         baseActionArray = GetComponents<BaseAction>();
     }
 
@@ -131,9 +134,17 @@ public class Unit : MonoBehaviour
     {
         return spinAction;
     }
+    public ShootAction GetShootAction()
+    {
+        return shootAction;
+    }
     public BaseAction[] GetBaseActionArray()
     {
         return baseActionArray;
+    }
+    public HealthSystem GetHealthSystem()
+    {
+        return healthSystem;
     }
 
     public bool TrySpendActionPointsToPerformAction(BaseAction action)
